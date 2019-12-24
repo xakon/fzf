@@ -91,6 +91,7 @@ lint: $(SOURCES) test/test_go.rb
 	rubocop --require rubocop-minitest --require rubocop-performance
 
 install: bin/fzf
+dist: fzf-${VERSION}.tar.gz
 
 generate:
 	PATH=$(PATH):$(GOPATH)/bin $(GO) generate ./...
@@ -175,6 +176,9 @@ bin/fzf: target/$(BINARY) | bin
 	-rm -f bin/fzf
 	cp -f target/$(BINARY) bin/fzf
 
+fzf-${VERSION}.tar.gz: bin/fzf bin/fzf-tmux man/man1/fzf.1 man/man1/fzf-tmux.1 plugin/fzf.vim doc/fzf.txt
+	tar zcf $@ $^
+
 docker:
 	docker build -t fzf-ubuntu .
 	docker run -it fzf-ubuntu tmux
@@ -188,3 +192,4 @@ update:
 	$(GO) mod tidy
 
 .PHONY: all generate build release test bench lint install clean docker docker-test update
+.PHONY: dist
